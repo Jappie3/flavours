@@ -176,6 +176,7 @@ fn main() -> Result<()> {
             }?;
 
             let to_stdout = sub_matches.is_present("stdout");
+            let to_json = sub_matches.is_present("json");
 
             let colors = generate::generate(&image, mode, verbose)?;
             let scheme = Scheme {
@@ -194,7 +195,11 @@ fn main() -> Result<()> {
             };
 
             if to_stdout {
-                print!("{}", serde_yaml::to_string(&scheme)?);
+                if !to_json {
+                    print!("{}", serde_yaml::to_string(&scheme)?);
+                } else {
+                    print!("{}", serde_json::to_string(&scheme)?);
+                }
             } else {
                 let path = flavours_dir
                     .join("base16")
@@ -204,9 +209,15 @@ fn main() -> Result<()> {
                     create_dir_all(&path)
                         .with_context(|| format!("Couldn't create directory {:?}", &path))?;
                 }
-                let file_path = &path.join(format!("{}.yaml", &scheme.slug));
-                write(file_path, serde_yaml::to_string(&scheme)?)
-                    .with_context(|| format!("Couldn't write scheme file at {:?}", path))?;
+                if !to_json {
+                    let file_path = &path.join(format!("{}.yaml", &scheme.slug));
+                    write(file_path, serde_yaml::to_string(&scheme)?)
+                        .with_context(|| format!("Couldn't write scheme file at {:?}", path))?;
+                } else {
+                    let file_path = &path.join(format!("{}.json", &scheme.slug));
+                    write(file_path, serde_json::to_string(&scheme)?)
+                        .with_context(|| format!("Couldn't write scheme file at {:?}", path))?;
+                }
             }
             Ok(())
         }

@@ -155,6 +155,11 @@ pub fn build_cli() -> App<'static> {
                     .about("Outputs scheme to stdout instead of writing it to a file.")
                     .long("stdout")
                 )
+                .arg(
+                    Arg::new("json")
+                    .about("Outputs scheme in JSON format rather than YAML.")
+                    .long("json")
+                )
         )
         .subcommand(
             App::new("apply")
