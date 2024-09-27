@@ -21,5 +21,6 @@ rustPlatform.buildRustPackage {
     homepage = manifest.repository;
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
+    mainProgram = "flavours";
   };
 }
